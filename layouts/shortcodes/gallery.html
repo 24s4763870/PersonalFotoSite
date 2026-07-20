@@ -1,0 +1,126 @@
+{{ $category := .Get "Category" | default "all" }}
+ <div id="gallery-container" class="gallery-wrapper">
+    </div>
+
+<div id="gallery-container" class="pagination">
+    <button id="prev-btn" class="page-btn" onclick="changePage(-1)">back</button>
+    <div class="goto-group">
+        <input type="number" id="page-input" min="1" placeholder="Page">
+        <button class="goto-btn" onclick="jumpToPage()">Go</button>
+    </div>
+
+    <span id="page-info" class="page-info"></span>
+    <button id="next-btn" class="page-btn" onclick="ChangePage(1)">next</button>
+
+</div>
+
+<script>
+    const rawData = {{ $.Site.Data.photos | jsonify | safeJs }};
+    const targetCategory = "{{ $category }}".toLowerCase().trim();
+
+    const allPhotos = targetCategory === "all"
+        ? rawData
+        : rawData.filter(photo => {
+            const photoCat = photo.category.toLowerCase().replace(/\/$/, "").trim();
+            return photoCat === targetCategory;  
+        });
+
+    const itemsPerPage = 45;
+    let currentPage = 1;
+
+    function renderGallery(page) {
+        const container = document.getElementById('gallery-container');
+        const pagination = document.getElementById('pagination-controls');
+        container.innerHTML = '';
+
+        if (!allPhotos || allPhotos.length === 0) {
+            container.innerHTML =  `
+                <div style="text-align:center; padding: 60px 20px; color: #888; width: 100%; grid-column: 1/-1;">
+                    <p style="font-size: 1.1em; font-weight: bold; text-transform: uppercase;">📸 Keine Fotos in "${targetCategory}" gefunden</p>
+                </div>`;
+            pagination.style.display = 'none';
+            return;
+        }
+        pagination.style.display = 'flex';
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = allPhotos.slice(start, end);
+
+        pageItems.forEach(photo => {
+            const card = document.createElement('div');
+            card.className = 'gallery-card';
+            card.innerHTML = `
+                <img src="${photo.url}" 
+                     loading="lazy" 
+                     decodings="async" 
+                     alt="${photo.name}"
+                     onclick="window.open(this.src, '_blank')">
+            `;
+            container.appendChild(card);
+        });
+
+        const totalPages = Math.ceil(allPhotos.length / itemsPerPage);
+        document.getElementById('page-info').innerText = `PAGE ${page} / ${totalPages}`;
+        
+        document.getElementById('prev-btn').style.visibility = page === 1 ? 'hidden' : 'visible';
+        document.getElementById('next-btn').style.visibility = page >= totalPages ? 'hidden' : 'visible';
+        
+        if (page > 1) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+    }
+
+    function changePage(step) {
+        currentPage += step;
+        renderGallery(currentPage);
+    }
+
+    function jumpToPage() {
+        const input = document.getElementById('page-input');
+        const targetPage = parseInt(input.value);
+        const totalPages = Math.ceil(allPhotos.length / itemsPerPage);
+
+        if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
+            alert(`Bitte gib eine gültige Seitenzahl ein! (1 - ${totalPages})`);
+            input.value = '';
+            return;
+        }
+
+        currentPage = targetPage;
+        renderGallery(currentPage);
+        input.value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderGallery(currentPage);
+        
+        document.getElementById('page-input')?.addEventListener('keypress', function (e){
+            if (e.key === 'Enter') {
+                jumpToPage();
+            }
+        });
+    });
+</script>
+
+<style>
+  .fcn-gallery-wrapper { width: 100%; column-count: 3; column-gap: 20px; min-height: 200px; }
+  .fcn-gallery-card { display: inline-block; width: 100%; margin-bottom: 20px; break-inside: avoid; background: #1a1a1a; border: 1px solid #222; }
+  .fcn-gallery-card img { width: 100%; border-radius: 0px !important; cursor: pointer; transition: 0.3s; display: block; }
+  .fcn-gallery-card:hover { border-color: #8A1A22; box-shadow: 0 8px 25px rgba(138, 26, 34, 0.25); }
+
+  .fcn-pagination { text-align: center; margin: 50px 0; display: flex; justify-content: center; align-items: center; gap: 15px; }
+  .fcn-page-btn { padding: 10px 22px; background: #8A1A22; color: #fff !important; border: none; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+  .fcn-page-btn:hover { background: #A6192E; }
+  .fcn-page-info { color: #aaa; font-size: 13px; font-weight: 600; }
+
+  .fcn-goto-group { display: flex; align-items: center; gap: 6px; }
+  #page-input { width: 65px; height: 38px; text-align: center; background: #1a1a1a; color: #fff; border: 1px solid #333; font-size: 14px; }
+  #page-input:focus { border-color: #8A1A22; outline: none; }
+  #page-input::-webkit-inner-spin-button, #page-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .fcn-goto-btn { height: 38px; padding: 0 14px; background: #333; color: #fff; border: none; font-weight: 700; cursor: pointer; }
+  .fcn-goto-btn:hover { background: #444; }
+
+  @media (max-width: 1000px) { .fcn-gallery-wrapper { column-count: 2; } }
+  @media (max-width: 600px) { .fcn-gallery-wrapper { column-count: 1; } }
+</style>

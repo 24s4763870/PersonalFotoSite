@@ -1,0 +1,31 @@
+baseURL = 'https://example.org/'
+locale = 'en-us'
+title = 'Welcome to My photosite'
+theme = "PaperMod"
+
+[markup.goldmark.renderer]
+    unsafe = true #
+
+# navigation
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+
+# Main entry
+[[menu.main]]
+    name = ""
+    identifier = ""
+    url = ""
+    weight = 2
+
+# Parent link
+[[menu.main]]
+    name = ""
+    url = ""
+    parent = "" # must match the above identifier
+    weight = 
+
+[frontmatter]
+    date = ["date", "publishDate", "lastmod"]
+    lastmod = ["lastmod", ":fileModTime", ":git"]
