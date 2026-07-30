@@ -1,0 +1,15 @@
+raw_photos/
+
+static/photos/
+
+public/
+resources/
+
+__pycache__/
+*.pyc
+
+.hugo_build.lock
+
+.DS_Store
+Thumbs.db
+.vscode/

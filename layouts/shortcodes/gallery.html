@@ -1,8 +1,8 @@
-{{ $category := .Get "Category" | default "all" }}
+{{ $category := .Get "category" | default (.Get "Category") | default "all" }}
  <div id="gallery-container" class="gallery-wrapper">
     </div>
 
-<div id="gallery-container" class="pagination">
+<div id="pagination-controls" class="pagination">
     <button id="prev-btn" class="page-btn" onclick="changePage(-1)">back</button>
     <div class="goto-group">
         <input type="number" id="page-input" min="1" placeholder="Page">
@@ -10,19 +10,27 @@
     </div>
 
     <span id="page-info" class="page-info"></span>
-    <button id="next-btn" class="page-btn" onclick="ChangePage(1)">next</button>
+    <button id="next-btn" class="page-btn" onclick="changePage(1)">next</button>
 
 </div>
 
 <script>
-    const rawData = {{ $.Site.Data.photos | jsonify | safeJs }};
+    // @ts-ignore
+    //const rawData = JSON.parse('{{ $.Site.Data.photos | jsonify | safeJS }}');
+    const rawData = JSON.parse('{{ $.Site.Data.photos | jsonify }}');
     const targetCategory = "{{ $category }}".toLowerCase().trim();
+
+    console.log("DEBUG -> Target:", targetCategory, "| Raw Data:", rawData);
 
     const allPhotos = targetCategory === "all"
         ? rawData
         : rawData.filter(photo => {
+            if(!photo || !photo.category) return false;
             const photoCat = photo.category.toLowerCase().replace(/\/$/, "").trim();
-            return photoCat === targetCategory;  
+            const target = targetCategory.toLowerCase().replace(/\/$/, "").trim();
+            if (photoCat === target) return true;
+ 
+            return photoCat.endsWith('/' + target) || photoCat.endsWith(target);
         });
 
     const itemsPerPage = 45;
@@ -104,23 +112,23 @@
 </script>
 
 <style>
-  .fcn-gallery-wrapper { width: 100%; column-count: 3; column-gap: 20px; min-height: 200px; }
-  .fcn-gallery-card { display: inline-block; width: 100%; margin-bottom: 20px; break-inside: avoid; background: #1a1a1a; border: 1px solid #222; }
-  .fcn-gallery-card img { width: 100%; border-radius: 0px !important; cursor: pointer; transition: 0.3s; display: block; }
-  .fcn-gallery-card:hover { border-color: #8A1A22; box-shadow: 0 8px 25px rgba(138, 26, 34, 0.25); }
+  .gallery-wrapper { width: 100%; column-count: 3; column-gap: 20px; min-height: 200px; }
+  .gallery-card { display: inline-block; width: 100%; margin-bottom: 20px; break-inside: avoid; background: #1a1a1a; border: 1px solid #222; }
+  .gallery-card img { width: 100%; border-radius: 0px !important; cursor: pointer; transition: 0.3s; display: block; }
+  .gallery-card:hover { border-color: #8A1A22; box-shadow: 0 8px 25px rgba(138, 26, 34, 0.25); }
 
-  .fcn-pagination { text-align: center; margin: 50px 0; display: flex; justify-content: center; align-items: center; gap: 15px; }
-  .fcn-page-btn { padding: 10px 22px; background: #8A1A22; color: #fff !important; border: none; font-weight: 700; text-transform: uppercase; cursor: pointer; }
-  .fcn-page-btn:hover { background: #A6192E; }
-  .fcn-page-info { color: #aaa; font-size: 13px; font-weight: 600; }
+  .pagination { text-align: center; margin: 50px 0; display: flex; justify-content: center; align-items: center; gap: 15px; }
+  .page-btn { padding: 10px 22px; background: #8A1A22; color: #fff !important; border: none; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+  .page-btn:hover { background: #A6192E; }
+  .page-info { color: #aaa; font-size: 13px; font-weight: 600; }
 
-  .fcn-goto-group { display: flex; align-items: center; gap: 6px; }
+  .goto-group { display: flex; align-items: center; gap: 6px; }
   #page-input { width: 65px; height: 38px; text-align: center; background: #1a1a1a; color: #fff; border: 1px solid #333; font-size: 14px; }
   #page-input:focus { border-color: #8A1A22; outline: none; }
   #page-input::-webkit-inner-spin-button, #page-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-  .fcn-goto-btn { height: 38px; padding: 0 14px; background: #333; color: #fff; border: none; font-weight: 700; cursor: pointer; }
-  .fcn-goto-btn:hover { background: #444; }
+  .goto-btn { height: 38px; padding: 0 14px; background: #333; color: #fff; border: none; font-weight: 700; cursor: pointer; }
+  .goto-btn:hover { background: #444; }
 
-  @media (max-width: 1000px) { .fcn-gallery-wrapper { column-count: 2; } }
-  @media (max-width: 600px) { .fcn-gallery-wrapper { column-count: 1; } }
+  @media (max-width: 1000px) { .gallery-wrapper { column-count: 2; } }
+  @media (max-width: 600px) { .gallery-wrapper { column-count: 1; } }
 </style>

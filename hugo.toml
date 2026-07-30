@@ -14,17 +14,29 @@ theme = "PaperMod"
 
 # Main entry
 [[menu.main]]
-    name = ""
-    identifier = ""
-    url = ""
+    name = "Photography"
+    identifier = "Photography"
+    url = "#"
     weight = 2
 
 # Parent link
 [[menu.main]]
-    name = ""
-    url = ""
-    parent = "" # must match the above identifier
-    weight = 
+    name = "Football & Sports"
+    url = "/photography/football_sports/"
+    parent = "Photography" # must match the above identifier
+    weight = 1
+
+[[menu.main]]
+  name = "Nature & Beauty"
+  url = "/photography/nature_beauty/"
+  parent = "Photography"      
+  weight = 2
+
+[[menu.main]]
+  name = "Racing"
+  url = "/photography/racing/"
+  parent = "Photography"      
+  weight = 3
 
 [frontmatter]
     date = ["date", "publishDate", "lastmod"]
