@@ -1,7 +1,7 @@
 baseURL = '/'
 locale = 'en-us'
 title = 'Welcome to My photosite'
-theme = "Paper"
+theme = "PaperMod"
 
 [markup.goldmark.renderer]
     unsafe = true
