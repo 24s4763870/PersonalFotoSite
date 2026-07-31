@@ -13,8 +13,8 @@ CACHE_FILE = "data/cache.json"
 JSON_OUTPUT = "data/photos.json"
 
 R2_ACCOUNT_ID = "9fa88ac9f06117d72c8cd0e22600be35"
-R2_ACCESS_KEY = "5717c8df4a32aa0b580ca68dbc64031f"
-R2_SECRET_KEY = "36ccb616fa3e58a541a3f02263a60c5b36b3862640c76185f3e907464569fc31"
+R2_ACCESS_KEY = "5a69cb268a40e337939d7e6f35e1217c"
+R2_SECRET_KEY = "82dcacadcd39a622174e74f48cf1e086b46c8a33bf9751fbb1d80ddd43a4bb8f"
 BUCKET_NAME = "guyee-fotosite"
 
 R2_PUBLIC_DOMAIN = "https://pub-1835983be9494648986014e022bfe242.r2.dev"
@@ -27,7 +27,6 @@ def calculate_md5(file_path):
     return hasher.hexdigest()
 
 def get_r2_client():
-    """初始化并返回 R2 S3 客户端"""
     endpoint_url = f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
     return boto3.client(
         's3',
@@ -38,18 +37,17 @@ def get_r2_client():
     )
 
 def upload_single_file_to_r2(s3_client, local_path, r2_key):
-    """上传单个 WebP 文件到 R2"""
     try:
         s3_client.upload_file(
             local_path,
             BUCKET_NAME,
             r2_key,
-            ExtraArgs={'ContentType': 'image/webp'} # 确保浏览器正常展示而非下载
+            ExtraArgs={'ContentType': 'image/webp'}
         )
-        print(f"  ☁️ 成功上传到 R2: {r2_key}")
+        print(f"Uploading to R2: {r2_key}")
         return True
     except Exception as e:
-        print(f"  ❌ 上传 R2 失败 {r2_key}: {e}")
+        print(f"Fail to upload to R2 {r2_key}: {e}")
         return False
 
 def process_photos():
@@ -68,6 +66,7 @@ def process_photos():
     new_cache = {}
     processed_count = 0
     skipped_count = 0
+    uploaded_count = 0
 
     print("connecting Cloudflare R2 ...")
     s3_client = get_r2_client()
@@ -91,17 +90,22 @@ def process_photos():
 
             target_filename = f"{file_hash}.webp"
             target_path = os.path.join(OUTPUT_PATH, target_filename)
-            if R2_PUBLIC_DOMAIN.strip():
-                domain = R2_PUBLIC_DOMAIN.rstrip('/')
-                web_url = f"{domain}/photos/{target_filename}"
-            else:
-                web_url = f"/photos/{target_filename}"
 
             r2_key = f"photos/{target_filename}"
+
+            if R2_PUBLIC_DOMAIN.strip():
+                domain = R2_PUBLIC_DOMAIN.rstrip('/')
+                web_url = f"{domain}/{r2_key}"
+            else:
+                web_url = f"/{r2_key}"
 
             if file_hash in cache_data and os.path.exists(target_path):
                 skipped_count += 1
                 new_cache[file_hash] = target_filename
+                
+                upload_single_file_to_r2(s3_client, target_path, r2_key)
+                uploaded_count += 1
+
                 photo_list.append({
                     "name": target_filename,
                     "url": web_url,
@@ -120,6 +124,7 @@ def process_photos():
                 upload_single_file_to_r2(s3_client, target_path, r2_key)
 
                 processed_count += 1
+                uploaded_count += 1
                 new_cache[file_hash] = target_filename
                 photo_list.append({
                     "name": target_filename,
@@ -128,6 +133,7 @@ def process_photos():
                 })
             except Exception as e:
                 print(f" fail to zip {filename} {e}")
+
     with open(CACHE_FILE, "w", encoding = "utf-8") as f:
         json.dump(new_cache, f, indent=4)
 
