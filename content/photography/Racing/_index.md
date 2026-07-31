@@ -5,4 +5,4 @@ layout: "single"
 ---
 Listen to the Engine
 
-{{< gallery category="Racing" >}}
+{{< gallery category="racing" >}}

@@ -5,4 +5,4 @@ layout: "single"
 ---
 Language about the Nature
 
-{{< gallery category="Nature_Beauty" >}}
+{{< gallery category="nature_beauty" >}}
