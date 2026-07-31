@@ -21,19 +21,19 @@ theme = "PaperMod"
 
 # Parent link
 [[menu.main]]
-    name = "Football & Sports"
+    name = "football_sports"
     url = "/photography/football_sports/"
-    parent = "Photography" # must match the above identifier
+    parent = "Photography" 
     weight = 1
 
 [[menu.main]]
-  name = "Nature & Beauty"
+  name = "nature_beauty"
   url = "/photography/nature_beauty/"
   parent = "Photography"      
   weight = 2
 
 [[menu.main]]
-  name = "Racing"
+  name = "racing"
   url = "/photography/racing/"
   parent = "Photography"      
   weight = 3
