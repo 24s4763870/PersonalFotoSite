@@ -3,6 +3,9 @@ locale = 'en-us'
 title = 'Welcome to My photosite'
 theme = "PaperMod"
 
+relativeURLs = false
+canonifyURLs = true
+
 [markup.goldmark.renderer]
     unsafe = true #
 
