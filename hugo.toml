@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://guyee-fotosite.pages.dev/'
 locale = 'en-us'
 title = 'Welcome to My photosite'
 theme = "PaperMod"
