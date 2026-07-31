@@ -1,7 +1,7 @@
-baseURL = 'https://guyee-fotosite.pages.dev/'
+baseURL = '/'
 locale = 'en-us'
 title = 'Welcome to My photosite'
-theme = "PaperMod"
+theme = "Paper"
 
 [markup.goldmark.renderer]
     unsafe = true
