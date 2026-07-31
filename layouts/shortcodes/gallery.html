@@ -14,13 +14,18 @@
 
 </div>
 
+<div id="lightbox-overlay" class="lightbox-overlay" onclick="closeLightbox(event)">
+    <button class="lightbox-close-btn" onclick="closeLightbox(event)" title="Close (ESC)">&times;</button>
+    <img id="lightbox-img" class="light-img" src="" alt="Zoomed Photo">
+</div>
+
 <script>
     // @ts-ignore
     //const rawData = JSON.parse('{{ $.Site.Data.photos | jsonify | safeJS }}');
     const rawData = JSON.parse('{{ $.Site.Data.photos | jsonify }}');
     const targetCategory = "{{ $category }}".toLowerCase().trim();
 
-    console.log("DEBUG -> Target:", targetCategory, "| Raw Data:", rawData);
+    //console.log("DEBUG -> Target:", targetCategory, "| Raw Data:", rawData);
 
     const allPhotos = targetCategory === "all"
         ? rawData
@@ -62,7 +67,7 @@
                      loading="lazy" 
                      decodings="async" 
                      alt="${photo.name}"
-                     onclick="window.open(this.src, '_blank')">
+                     onclick="openLightbox('${photo.url}')">
             `;
             container.appendChild(card);
         });
@@ -78,6 +83,30 @@
         }
 
     }
+
+    function openLightbox(imgUrl) {
+        const overlay = document.getElementById('lightbox-overlay');
+        const img = document.getElementById('lightbox-img');
+        if (overlay && img) {
+            img.src = imgUrl;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeLightbox(e) {
+        if (e && e.target.id === 'lightbox-img') return;
+
+        const overlay = document.getElementById('lightbox-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
+    });
 
     function changePage(step) {
         currentPage += step;
@@ -128,6 +157,60 @@
   #page-input::-webkit-inner-spin-button, #page-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   .goto-btn { height: 38px; padding: 0 14px; background: #333; color: #fff; border: none; font-weight: 700; cursor: pointer; }
   .goto-btn:hover { background: #444; }
+
+  .lightbox-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+  }
+  .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+  }
+  .lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border: 2px solid #222;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  }
+  .lightbox-close-btn {
+      position: absolute;
+      top: 25px;
+      right: 35px;
+      background: #8A1A22;
+      color: #ffffff !important;
+      border: none;
+      font-size: 32px;
+      line-height: 1 !important;
+      font-family: Arial, sans-serif;
+      width: 45px;
+      height: 45px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 !important;
+      margin: 0;
+      border-radius: 4px;
+      transition: background 0.2s, transform 0.1s;
+      z-index: 100000;
+  }
+  .lightbox-close-btn:hover {
+      background: #A6192E;
+      transform: scale(1.08);
+  }
 
   @media (max-width: 1000px) { .gallery-wrapper { column-count: 2; } }
   @media (max-width: 600px) { .gallery-wrapper { column-count: 1; } }

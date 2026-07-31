@@ -12,7 +12,7 @@ you can find the catalogs here:
 
 * [**Football Sports**](/photography/Football_Sports/) - Game is on
 
-* [**Nature Beauty**](/photography/Nature_Beauty/) - Open eys and see
+* [**Nature Beauty**](/photography/Nature_Beauty/) - Open eyes and see
 
 * [**Racing**](/photography/Racing/) - Engine roars
 

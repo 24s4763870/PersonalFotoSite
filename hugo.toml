@@ -16,7 +16,7 @@ theme = "PaperMod"
 [[menu.main]]
     name = "Photography"
     identifier = "Photography"
-    url = "#"
+    url = "/photography/"
     weight = 2
 
 # Parent link
