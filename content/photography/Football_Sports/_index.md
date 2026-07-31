@@ -5,4 +5,4 @@ layout: "single"
 ---
 anything about football
 
-{{< gallery category="football_sports" >}}
+{{< gallery category="Football_Sports" >}}
