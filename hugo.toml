@@ -39,8 +39,8 @@ theme = "PaperMod"
   weight = 3
 
 [[menu.main]]
-  name = "FCN"
-  url = "/photography/FCN/"
+  name = "1.FCN"
+  url = "/photography/fcn/"
   parent = "Photography"      
   weight = 4
 
