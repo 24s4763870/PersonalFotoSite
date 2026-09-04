@@ -16,7 +16,7 @@ you can find the catalogs here:
 
 * [**Racing**](/photography/racing/) - Engine roars
 
-* [**FCN**](/photography/FCN/) - Rot und Weiss
+* [**FCN**](/photography/fcn/) - Rot und Weiss
 
 ---
 
