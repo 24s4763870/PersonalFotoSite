@@ -38,6 +38,12 @@ theme = "PaperMod"
   parent = "Photography"      
   weight = 3
 
+[[menu.main]]
+  name = "FCN"
+  url = "/photography/FCN/"
+  parent = "Photography"      
+  weight = 4
+
 [frontmatter]
     date = ["date", "publishDate", "lastmod"]
     lastmod = ["lastmod", ":fileModTime", ":git"]
